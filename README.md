@@ -141,3 +141,37 @@ npm test # or: npx tsx src/test/verifyAll.ts
 ```
 
 All 19 verification points run against SQLite and pass with zero failures.
+
+---
+
+## ☁️ Deployment on Render
+
+This repository includes a `render.yaml` Blueprint for 1-click deployment on Render, as well as manual setup instructions.
+
+### Option A: Render Blueprint (Recommended)
+1. Push your repository to GitHub.
+2. In the Render Dashboard, click **New +** $\rightarrow$ **Blueprint**.
+3. Select this repository. Render will automatically parse `render.yaml` and configure:
+   - **Backend Web Service**: Node.js, `npm install && npm run build`, `npm start`, bound to `0.0.0.0:$PORT`.
+   - **Frontend Static Site**: Vite, `npm install && npm run build`, publish directory `dist`, with `VITE_API_URL` pointing automatically to the backend web service.
+4. Click **Apply**. Both services will build and deploy.
+
+### Option B: Manual Setup on Render
+1. **Backend Web Service**:
+   - **Environment**: Node
+   - **Root Directory**: `backend`
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
+   - **Environment Variables**:
+     - `PORT`: (Set automatically by Render)
+     - `NODE_ENV`: `production`
+     - *(Optional)* `FRONTEND_URL`: Your deployed frontend URL (CORS also automatically permits all `*.onrender.com` domains).
+
+2. **Frontend Static Site**:
+   - **Environment**: Static Site
+   - **Root Directory**: `frontend`
+   - **Build Command**: `npm install && npm run build`
+   - **Publish Directory**: `dist`
+   - **Environment Variables**:
+     - `VITE_API_URL`: `https://<your-backend-service-name>.onrender.com`
+

@@ -7,7 +7,23 @@ import {
   RiskState
 } from '../types';
 
-const API_BASE = '/api';
+// Resolve API base URL from environment variables for deployment (Render, Vercel, etc.)
+// Defaults to '/api' for local Vite dev proxy
+const getApiBaseUrl = (): string => {
+  const envUrl =
+    (import.meta.env.VITE_API_URL as string | undefined) ||
+    (import.meta.env.VITE_BACKEND_URL as string | undefined) ||
+    (import.meta.env.VITE_API_BASE_URL as string | undefined);
+
+  if (envUrl && envUrl.trim()) {
+    const trimmed = envUrl.trim().replace(/\/+$/, '');
+    return trimmed.endsWith('/api') ? trimmed : `${trimmed}/api`;
+  }
+
+  return '/api';
+};
+
+const API_BASE = getApiBaseUrl();
 
 export const api = axios.create({
   baseURL: API_BASE,
